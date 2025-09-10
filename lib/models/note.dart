@@ -1,12 +1,9 @@
-import 'package:flutter/material.dart';
-
 class Note {
   String id;
   String title;
   String userId;
   String content;
   DateTime lastUpdated;
-  Color bgColor;
 
   Note({
     required this.id,
@@ -14,9 +11,9 @@ class Note {
     required this.userId,
     required this.content,
     required this.lastUpdated,
-    this.bgColor = Colors.grey,
   });
 
+  // use while pushing to a database
   Map<String, dynamic> toJson() {
     return {
       'id': id,
@@ -24,10 +21,10 @@ class Note {
       'userId': userId,
       'content': content,
       'lastUpdated': lastUpdated.toIso8601String(),
-      'bgColor': bgColor.toARGB32(),
     };
   }
 
+  // use while getting it from the database
   factory Note.fromJson(Map<String, dynamic> map) {
     return Note(
       id: map['id'],
@@ -35,7 +32,6 @@ class Note {
       userId: map['userId'],
       content: map['content'],
       lastUpdated: DateTime.parse(map['lastUpdated']),
-      bgColor: Color(map['bgColor']),
     );
   }
 }

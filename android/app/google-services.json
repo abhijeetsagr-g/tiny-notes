@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1098391103641",
+    "project_id": "tiny-notes-c200c",
+    "storage_bucket": "tiny-notes-c200c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1098391103641:android:a9f6968497f2673ad17008",
+        "android_client_info": {
+          "package_name": "com.example.tiny_notes"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAu5Q4DH_vbeOmuZMizTDzlQe974Fm_bsU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
