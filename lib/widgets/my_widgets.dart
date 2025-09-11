@@ -27,7 +27,7 @@ Widget formElevatedButton({required String hintText, required Function fun}) {
   );
 }
 
-void showSnackbar(BuildContext context, String content) {
+void showSnackbar(context, String content) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       duration: const Duration(seconds: 1),

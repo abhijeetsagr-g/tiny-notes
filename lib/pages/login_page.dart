@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:provider/provider.dart';
 import 'package:tiny_notes/services/auth_service.dart';
 import 'package:tiny_notes/widgets/my_widgets.dart';
@@ -15,46 +14,45 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool showFirstForm = true;
+  late final AuthService auth = Provider.of<AuthService>(
+    context,
+    listen: false,
+  );
 
-  @override
-  void dispose() {
-    super.dispose();
-    emailController.dispose();
-    passwordController.dispose();
+  void goToRegisterPage() {
+    Navigator.popAndPushNamed(context, '/register');
   }
 
-  bool showFirstForm = true;
+  void _onSuccess() {
+    showSnackbar(context, "Logged In Successfully");
+    Navigator.pop(context);
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    final auth = Provider.of<AuthService>(context, listen: false);
-
-    void onSuccess() {
-      Navigator.pop(context);
-      showSnackbar(context, "Logged In Successfully");
-    }
-
-    void onError(String message) {
+  void _onError(String message) {
+    passwordController.clear();
+    setState(() {
       showSnackbar(context, message);
       showFirstForm = true;
-    }
+    });
+  }
 
-    void login() async {
-      try {
-        await auth.signInWithEmailAndPassword(
-          email: emailController.text,
-          password: passwordController.text,
-        );
-        onSuccess();
-      } on FirebaseAuthException catch (e) {
-        setState(() {
-          onError(e.message ?? "Something Unexpected Happened");
-        });
-      }
+  Future<void> _login() async {
+    try {
+      await auth.signInWithEmailAndPassword(
+        email: emailController.text.trim(),
+        password: passwordController.text,
+      );
+      _onSuccess();
+    } on FirebaseAuthException catch (e) {
+      _onError(e.message ?? "Something unexpected happened");
     }
+  }
 
-    List<Widget> emailForm() {
-      return [
+  Widget _emailForm() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
         formTextField(
           controller: emailController,
           hintText: "Email Address",
@@ -64,36 +62,53 @@ class _LoginPageState extends State<LoginPage> {
           hintText: "Continue",
           fun: () {
             if (emailController.text.isNotEmpty) {
-              setState(() {
-                showFirstForm = false;
-              });
+              setState(() => showFirstForm = false);
             }
           },
         ),
-      ];
-    }
+      ],
+    );
+  }
 
-    List<Widget> passwordForm() {
-      return [
+  Widget _passwordForm() {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
         formTextField(
           controller: passwordController,
           hintText: "Password",
           isObscure: true,
         ),
-        formElevatedButton(hintText: "Login", fun: login),
-      ];
-    }
+        formElevatedButton(hintText: "Login", fun: _login),
+      ],
+    );
+  }
 
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          TextButton.icon(
+            style: TextButton.styleFrom(foregroundColor: Colors.grey),
+            onPressed: goToRegisterPage,
+            icon: Icon(Icons.app_registration),
+            label: Text("Register Instead?"),
+          ),
+        ],
+      ),
       body: Center(
         child: Card(
           child: Padding(
             padding: const EdgeInsets.all(10),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: showFirstForm ? emailForm() : passwordForm(),
-            ),
+            child: showFirstForm ? _emailForm() : _passwordForm(),
           ),
         ),
       ),

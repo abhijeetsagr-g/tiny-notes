@@ -12,36 +12,41 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late final auth = Provider.of<AuthService>(context, listen: false);
+
+  void _onLogout() {
+    showSnackbar(context, "Signed Out");
+  }
+
+  void logout() async {
+    await auth.signOut();
+    _onLogout();
+  }
+
+  List<Widget> actionOnLoggedOut() {
+    return [
+      TextButton.icon(
+        style: TextButton.styleFrom(foregroundColor: Colors.grey),
+        onPressed: () {
+          Navigator.pushNamed(context, '/login');
+        },
+        icon: Icon(Icons.login),
+        label: Text("Login"),
+      ),
+    ];
+  }
+
+  List<Widget> actionOnLoggedIn() {
+    return [
+      IconButton(onPressed: () {}, icon: Icon(Icons.delete_forever)),
+      IconButton(onPressed: logout, icon: Icon(Icons.logout)),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
-    final auth = Provider.of<AuthService>(context, listen: false);
     final user = Provider.of<User?>(context);
     bool isSignedIn = user != null;
-
-    void logout() async {
-      await auth.signOut();
-      showSnackbar(context, "Signed Out");
-    }
-
-    List<Widget> actionOnLoggedOut() {
-      return [
-        TextButton.icon(
-          style: TextButton.styleFrom(foregroundColor: Colors.grey),
-          onPressed: () {
-            Navigator.pushNamed(context, '/login');
-          },
-          icon: Icon(Icons.login),
-          label: Text("Login"),
-        ),
-      ];
-    }
-
-    List<Widget> actionOnLoggedIn() {
-      return [
-        IconButton(onPressed: () {}, icon: Icon(Icons.delete_forever)),
-        IconButton(onPressed: logout, icon: Icon(Icons.logout)),
-      ];
-    }
 
     return Scaffold(
       appBar: AppBar(
